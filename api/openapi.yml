@@ -1,0 +1,104 @@
+openapi: "3.0.2"
+
+info:
+  title: Dynamic user segmentation service API
+  version: "1.0"
+  contact:
+    name: "Dynamic user segmentation service"
+    email: makcika@inbox.ru
+
+servers:
+  - url: http://127.0.0.1:8080
+
+paths:
+  /segments:
+    post:
+      summary: create segment
+      operationId: createSegment
+      requestBody:
+        description: name of new segment
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        201:
+          description: Created
+        409:
+          description: Alreade exists
+
+    delete:
+      summary: delete segment
+      operationId: deleteSegment
+      requestBody:
+        description: name of delete segment
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        200:
+          description: OK
+        409:
+          description: Not exist
+
+  /users/{user_id}:
+    put:
+      summary: change user segments
+      description: "you can add segments to user and delete segments from user. use add:[segment_1, segment_2] to add, delete:[segment_1,segment_2] to delete"
+      operationId: changeUserSegments
+      requestBody:
+        description: name of segments
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                add:
+                  type: array
+                  items:
+                    type: string
+                delete:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        200:
+          description: OK
+        409:
+          description: no user
+
+    get:
+      summary: show segments of user
+      operationId: showSegmentOfUser
+      parameters:
+        - name: user_id
+          in: path
+          description: id of user
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+          example: 356354635
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: array
+                items:
+                  type: string
+
+        404:
+          description: Not found responses
+          content:
+            text/plain:
+              schema:
+                title: No segments for this user
+                type: string
+                example: Not found
